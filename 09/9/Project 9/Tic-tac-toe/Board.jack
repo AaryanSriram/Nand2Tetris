@@ -1,0 +1,130 @@
+class Board 
+{
+    field Array cells;        // 0 -> empty, 1 -> X, 2 -> O
+    field int x0, y0;          // top-left coordinate
+    field int cellSize;        // size of each box
+
+    constructor Board new()
+    {
+        var int i;
+        let i = 0;
+        let cells = Array.new(9);
+        while(i<9)
+        {
+            let cells[i] = 0;
+            let i = i+1;
+        }
+        let x0=300;
+        let y0=80;
+        let cellSize = 40;
+        return this;
+    }
+
+    method void draw() 
+    {
+        var int row, col;
+        var int x, y;
+        var int i;
+
+        // draw grid lines
+        do Screen.setColor(true);
+
+        let row = 1;
+        while (row < 3) 
+        {
+            do Screen.drawRectangle(x0, y0 + (row * cellSize), x0 + (3 * cellSize), y0 + (row * cellSize));
+            let row = row + 1;
+        }
+
+        let col = 1;
+        while (col < 3) 
+        {
+            do Screen.drawRectangle(x0 + (col * cellSize), y0, x0 + (col * cellSize), y0 + (3 * cellSize));
+            let col = col + 1;
+        }
+
+        // draw each cell's symbol (X or O)
+        let i = 0;
+        while (i < 9) {
+            let row = i / 3;
+            let col = i - (row * 3);
+            let x = x0 + (col * cellSize);
+            let y = y0 + (row * cellSize);
+
+            if (cells[i] = 1) {
+                do drawX(x, y);
+            }
+            if (cells[i] = 2) {
+                do drawO(x, y);
+            }
+
+            let i = i + 1;
+        }
+        return;
+    }
+
+    method void drawX(int x, int y)
+    {
+        do Screen.drawLine(x + 5, y + 5, x + cellSize - 5, y + cellSize - 5);
+        do Screen.drawLine(x + 5, y + cellSize - 5, x + cellSize - 5, y + 5);
+        return;
+    }
+
+    method void drawO(int x, int y)
+    {
+        var int cx, cy, radius;
+
+        // center of the cell
+        let cx = x + (cellSize / 2);
+        let cy = y + (cellSize / 2);
+
+        // choose radius slightly smaller than half cell size
+        let radius = (cellSize / 2) - 5;
+
+        do Screen.drawCircle(cx, cy, radius);
+        return;
+    }
+
+    method void markcell(int index, int player)
+    {
+        if(cells[index]=0)
+        {
+            let cells[index] = player;
+        }
+        return;
+    }
+
+    method boolean isFull()
+    {
+        var int i;
+        let i=0;
+        while(i<9)
+        {
+            if(cells[i]=0)
+            {
+                return false;
+            }
+            let i = i+1;
+        }
+        return true;
+    }
+
+    method int getcell(int row, int col)
+    {
+        var int i;
+        let i = ((row*3) + col);
+        return cells[i];
+    }
+
+    method void dispose()
+    {
+        var int i;
+        let i = 0;
+        while(i<9)
+        {
+            let cells[i] = 0;
+            let i = i+1;
+        }
+        return;
+    }
+}

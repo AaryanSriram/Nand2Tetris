@@ -1,0 +1,128 @@
+class Game 
+{
+    field Board board;
+    field int currPlayer; // 1->X; 2->O.
+    field boolean running; // checks whether the game is still running
+
+    constructor Game new() {
+        let board = Board.new();
+        let currPlayer = 1;
+        let running = true;
+        return this;
+    }
+
+    method void run() {
+        var boolean a,b;
+        while(running) {
+            do board.draw();
+            do processTurn();
+            let a = checkWin();
+            let b = checkDraw();
+            if(a) {
+                do displayResult(currPlayer);
+                let running = false;
+            }
+            if(b) {
+                do displayResult(0);
+                let running = false;
+            }
+            else {
+                do switchPlayer();
+            }
+        }
+        return;
+    }
+
+    method void processTurn() {
+        var int row, col, index;
+        var boolean correct;
+        let correct = true;
+        while(correct) {
+            do Output.printString("Player ");
+            do Output.printInt(currPlayer);
+            do Output.printString(", enter row (0–2): ");
+            let row = Keyboard.readInt("");
+    
+            do Output.printString("Enter column (0–2): ");
+            let col = Keyboard.readInt("");
+
+            let index = (row * 3) + col;
+
+            if (board.getcell(row, col) = 0) {
+                do board.markcell(index, currPlayer);
+                let correct = false;
+            }
+            else {
+                do Output.printString("Cell already occupied!");
+                do Output.println();
+            }
+        }
+        do board.draw();   // redraw the board after the move
+        return;
+    }
+
+    method boolean checkWin() {
+        if((board.getcell(0,0)=board.getcell(0,1)) & (board.getcell(0,1)=board.getcell(0,2)) & ~(board.getcell(0,0)=0))
+        {
+            return true;
+        }
+        if((board.getcell(1,0)=board.getcell(1,1)) & (board.getcell(1,1)=board.getcell(1,2)) & ~(board.getcell(1,2)=0)) {
+            return true;
+        }
+        if((board.getcell(2,0)=board.getcell(2,1)) & (board.getcell(2,1)=board.getcell(2,2)) & ~(board.getcell(2,2)=0)) {
+            return true;
+        }
+        if((board.getcell(0,2)=board.getcell(1,2)) & (board.getcell(1,2)=board.getcell(2,2)) & ~(board.getcell(2,2)=0)) {
+            return true;
+        }
+        if((board.getcell(0,1)=board.getcell(1,1)) & (board.getcell(1,1)=board.getcell(2,1)) & ~(board.getcell(2,1)=0)) {
+            return true;
+        }
+        if((board.getcell(0,0)=board.getcell(1,0)) & (board.getcell(1,0)=board.getcell(2,0)) & ~(board.getcell(0,0)=0)) {
+            return true;
+        }
+        if((board.getcell(0,0)=board.getcell(1,1)) & (board.getcell(1,1)=board.getcell(2,2)) & ~(board.getcell(0,0)=0)) {
+            return true;
+        }
+        if((board.getcell(0,2)=board.getcell(1,1)) & (board.getcell(1,1)=board.getcell(2,0)) & ~(board.getcell(2,0)=0)) {
+            return true;
+        }
+        return false;
+    }
+    method boolean checkDraw() {
+        if((board.isFull()) & (~checkWin())) {
+            return true;
+        }
+        return false;
+    }
+    method void displayResult(int winner) {
+        do Output.println();
+        if (winner = 0) {
+            do Output.printString("It's a draw!");
+            do Output.println();
+        } 
+        else {
+            do Output.printString("Player ");
+            do Output.printInt(winner);
+            do Output.printString(" wins!");
+            do Output.println();
+        }
+        do Output.println();
+        return;
+    }
+
+    method void switchPlayer() {
+        if(currPlayer=1) {
+            let currPlayer = 2;
+        }
+        else {
+            let currPlayer = 1;
+        }
+        return;
+    }
+
+    method void dispose() {
+        do board.dispose();
+        return;
+    }
+}
